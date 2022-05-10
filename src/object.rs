@@ -5,6 +5,7 @@ pub struct Hit {
     pub point: Vec3,
     pub normal: Vec3,
     pub t: f32,
+    pub is_front: bool,
 }
 
 pub trait Hittable {
@@ -50,7 +51,8 @@ impl Hittable for Sphere {
             let t = root;
             let point = ray.at(t);
             let normal = (point - self.center) / self.radius;
-            Some(Hit { t, point, normal })
+            let is_front = ray.direction().dot(&normal) <= 0.0;
+            Some(Hit { t, point, normal, is_front })
         } else {
             None
         }
