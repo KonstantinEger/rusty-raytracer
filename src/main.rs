@@ -6,6 +6,9 @@ mod camera;
 mod object;
 
 use controller::*;
+use vec3::*;
+use object::*;
+use ray::*;
 
 fn main() {
     use std::io::prelude::*;
@@ -45,7 +48,7 @@ fn render(ctl: &mut Controller) {
                 let cam = ctl.camera();
                 let o = cam.origin();
                 let dir = cam.llc() + cam.horizontal()*u + cam.vertical()*v - cam.origin();
-                ray::Ray::from((o, dir))
+                Ray::from((o, dir))
             };
             let color = ray_color(&ray);
             ctl.write_color(&color);
@@ -55,15 +58,14 @@ fn render(ctl: &mut Controller) {
 
 fn ray_color(ray: &ray::Ray) -> vec3::Vec3 {
     {
-        use object::Hittable;
-        let sphere = object::Sphere::new((0.0, 0.0, -1.0).into(), 0.5);
-        match sphere.hit_by(ray) {
-            Some(object::Hit::Color(color)) => return color,
-            None => {}
+        let sphere = Sphere::new((0.0, 0.0, -1.0).into(), 0.5);
+        if let Some(hit) = sphere.hit_by(ray, 0.0, f32::MAX) {
+            let unit_normal = hit.normal.unit();
+            return (unit_normal + Vec3::from((1.0, 1.0, 1.0))) * 0.5;
         }
     }
     let dir_unit = ray.direction().unit();
     let t = 0.5 * (dir_unit.y() + 1.0);
-    vec3::Vec3::from((1.0, 1.0, 1.0))*(1.0-t) + vec3::Vec3::from((0.5, 0.7, 1.0))*t
+    Vec3::from((1.0, 1.0, 1.0))*(1.0-t) + Vec3::from((0.5, 0.7, 1.0))*t
 }
 
