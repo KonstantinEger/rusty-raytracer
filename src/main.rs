@@ -3,6 +3,7 @@ mod controller;
 mod vec3;
 mod ray;
 mod camera;
+mod object;
 
 use controller::*;
 
@@ -53,6 +54,14 @@ fn render(ctl: &mut Controller) {
 }
 
 fn ray_color(ray: &ray::Ray) -> vec3::Vec3 {
+    {
+        use object::Hittable;
+        let sphere = object::Sphere::new((0.0, 0.0, -1.0).into(), 0.5);
+        match sphere.hit_by(ray) {
+            Some(object::Hit::Color(color)) => return color,
+            None => {}
+        }
+    }
     let dir_unit = ray.direction().unit();
     let t = 0.5 * (dir_unit.y() + 1.0);
     vec3::Vec3::from((1.0, 1.0, 1.0))*(1.0-t) + vec3::Vec3::from((0.5, 0.7, 1.0))*t
