@@ -32,7 +32,7 @@ impl Vec3 {
     }
 
     #[inline]
-    pub fn unit(&self) -> Vec3 {
+    pub fn unit(self) -> Vec3 {
         self / self.len()
     }
 
@@ -47,7 +47,7 @@ impl Vec3 {
     }
 }
 
-impl std::ops::Neg for &Vec3 {
+impl std::ops::Neg for Vec3 {
     type Output = Vec3;
 
     fn neg(self) -> Vec3 {
@@ -55,7 +55,7 @@ impl std::ops::Neg for &Vec3 {
     }
 }
 
-impl std::ops::Mul<f32> for &Vec3 {
+impl std::ops::Mul<f32> for Vec3 {
     type Output = Vec3;
 
     fn mul(self, val: f32) -> Vec3 {
@@ -63,7 +63,7 @@ impl std::ops::Mul<f32> for &Vec3 {
     }
 }
 
-impl std::ops::Div<f32> for &Vec3 {
+impl std::ops::Div<f32> for Vec3 {
     type Output = Vec3;
 
     fn div(self, val: f32) -> Vec3 {
@@ -71,16 +71,24 @@ impl std::ops::Div<f32> for &Vec3 {
     }
 }
 
-impl std::ops::Add for &Vec3 {
+impl std::ops::Add for Vec3 {
     type Output = Vec3;
 
-    fn add(self, rhs: &Vec3) -> Vec3 {
+    fn add(self, rhs: Vec3) -> Vec3 {
         Vec3(self.0+rhs.x(), self.1+rhs.y(), self.2+rhs.z())
     }
 }
 
-impl std::ops::AddAssign<&Vec3> for Vec3 {
-    fn add_assign(&mut self, rhs: &Vec3) {
+impl std::ops::Sub for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Vec3 {
+        self + (-rhs)
+    }
+}
+
+impl std::ops::AddAssign<Vec3> for Vec3 {
+    fn add_assign(&mut self, rhs: Vec3) {
         self.0 += rhs.x();
         self.1 += rhs.y();
         self.2 += rhs.z();

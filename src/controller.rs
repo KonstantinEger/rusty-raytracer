@@ -1,15 +1,14 @@
 use crate::vec3::Vec3;
+use crate::camera::Camera;
 
 pub struct Controller {
-    width: usize,
-    height: usize,
+    camera: Camera,
     output: Vec<u8>,
 }
 impl Controller {
     pub fn new(width: usize, height: usize) -> Self {
         let mut res = Self {
-            width,
-            height,
+            camera: Camera::new(width, height),
             output: Vec::with_capacity(width * height * 12 + 20),
         };
         res.output.extend_from_slice(&format!("P3\n{} {}\n255\n", width, height).as_bytes());
@@ -18,12 +17,16 @@ impl Controller {
 
     #[inline(always)]
     pub fn width(&self) -> usize {
-        self.width
+        self.camera.image_width()
     }
 
     #[inline(always)]
     pub fn height(&self) -> usize {
-        self.height
+        self.camera.image_height()
+    }
+
+    pub fn camera(&self) -> &Camera {
+        &self.camera
     }
 
     pub fn write_color(&mut self, color: &Vec3) {
