@@ -1,15 +1,15 @@
 #![allow(dead_code)]
-mod controller;
-mod vec3;
-mod ray;
 mod camera;
+mod controller;
 mod object;
+mod ray;
+mod vec3;
 
 use controller::*;
 
 fn main() {
-    use std::io::prelude::*;
     use std::fs;
+    use std::io::prelude::*;
     use std::time::*;
 
     let mut file = fs::File::options()
@@ -23,16 +23,18 @@ fn main() {
     let mut ctl = Controller::new(width, height);
     let start = Instant::now();
 
-
     ctl.add_object(object::Sphere::new((0.0, 0.0, -1.0).into(), 0.5));
     ctl.add_object(object::Sphere::new((0.0, 100.5, -1.0).into(), 100.0));
     ctl.render();
 
-
     let end = Instant::now();
     let dur = end.duration_since(start);
-    println!("Render complete\ntime:\t{}ms\nfile:\toutput.txt\nres:\t{}x{}", dur.as_millis(), width, height);
+    println!(
+        "Render complete\ntime:\t{}ms\nfile:\toutput.txt\nres:\t{}x{}",
+        dur.as_millis(),
+        width,
+        height
+    );
 
     file.write(ctl.output()).expect("writing to file");
 }
-

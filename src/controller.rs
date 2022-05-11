@@ -1,7 +1,7 @@
-use crate::vec3::Vec3;
-use crate::ray::Ray;
 use crate::camera::Camera;
-use crate::object::{Hittable, Hit};
+use crate::object::Hittable;
+use crate::ray::Ray;
+use crate::vec3::Vec3;
 
 pub struct Controller {
     camera: Camera,
@@ -15,7 +15,8 @@ impl Controller {
             output: Vec::with_capacity(width * height * 12 + 20),
             objects: vec![],
         };
-        res.output.extend_from_slice(&format!("P3\n{} {}\n255\n", width, height).as_bytes());
+        res.output
+            .extend_from_slice(&format!("P3\n{} {}\n255\n", width, height).as_bytes());
         res
     }
 
@@ -63,11 +64,11 @@ impl Controller {
                 let ray = {
                     let cam = self.camera();
                     let o = cam.origin();
-                    let dir = cam.llc() + cam.horizontal()*u + cam.vertical()*v - cam.origin();
+                    let dir = cam.llc() + cam.horizontal() * u + cam.vertical() * v - cam.origin();
                     Ray::from((o, dir))
                 };
 
-                let mut hit: Option<Hit> = None;
+                let mut hit = None;
                 let mut t_closest = f32::MAX;
                 for obj in self.objects.iter() {
                     if let Some(h) = obj.hit_by(&ray, 0.0, t_closest) {

@@ -25,9 +25,9 @@ impl Vec3 {
     #[inline]
     pub fn cross(self, rhs: &Vec3) -> Vec3 {
         Self(
-            self.y()*rhs.z() - self.z()*rhs.y(),
-            self.z()*rhs.x() - self.x()*rhs.z(),
-            self.x()*rhs.y() - self.y()*rhs.x()
+            self.y() * rhs.z() - self.z() * rhs.y(),
+            self.z() * rhs.x() - self.x() * rhs.z(),
+            self.x() * rhs.y() - self.y() * rhs.x(),
         )
     }
 
@@ -43,7 +43,7 @@ impl Vec3 {
 
     #[inline]
     pub fn len_sqr(&self) -> f32 {
-        self.0*self.0 + self.1*self.1 + self.2*self.2
+        self.0 * self.0 + self.1 * self.1 + self.2 * self.2
     }
 }
 
@@ -75,7 +75,7 @@ impl std::ops::Add for Vec3 {
     type Output = Vec3;
 
     fn add(self, rhs: Vec3) -> Vec3 {
-        Vec3(self.0+rhs.x(), self.1+rhs.y(), self.2+rhs.z())
+        Vec3(self.0 + rhs.x(), self.1 + rhs.y(), self.2 + rhs.z())
     }
 }
 

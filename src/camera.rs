@@ -20,7 +20,8 @@ impl Camera {
         let origin = Vec3::from((0.0, 0.0, 0.0));
         let horizontal = Vec3::from((viewport_width, 0.0, 0.0));
         let vertical = Vec3::from((0.0, viewport_height, 0.0));
-        let lower_left_corner = origin - (horizontal / 2.0) - (vertical / 2.0) - Vec3::from((0.0, 0.0, focal_len));
+        let lower_left_corner =
+            origin - (horizontal / 2.0) - (vertical / 2.0) - Vec3::from((0.0, 0.0, focal_len));
 
         Self {
             aspect_ratio,
@@ -57,4 +58,3 @@ impl Camera {
         self.vertical
     }
 }
-

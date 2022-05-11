@@ -1,5 +1,5 @@
-use crate::vec3::Vec3;
 use crate::ray::Ray;
+use crate::vec3::Vec3;
 
 pub struct Hit {
     pub point: Vec3,
@@ -37,8 +37,8 @@ impl Hittable for Sphere {
         let oc = ray.origin() - self.center;
         let a = ray.direction().len_sqr();
         let half_b = oc.dot(&ray.direction());
-        let c = oc.len_sqr() - self.radius*self.radius;
-        let discriminant = half_b*half_b - a*c;
+        let c = oc.len_sqr() - self.radius * self.radius;
+        let discriminant = half_b * half_b - a * c;
         if discriminant >= 0.0 {
             let disc_sqrt = discriminant.sqrt();
             let mut root = (-half_b - disc_sqrt) / a;
@@ -52,7 +52,12 @@ impl Hittable for Sphere {
             let point = ray.at(t);
             let normal = (point - self.center) / self.radius;
             let is_front = ray.direction().dot(&normal) <= 0.0;
-            Some(Hit { t, point, normal, is_front })
+            Some(Hit {
+                t,
+                point,
+                normal,
+                is_front,
+            })
         } else {
             None
         }
