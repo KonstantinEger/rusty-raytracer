@@ -9,13 +9,13 @@ use controller::*;
 
 fn main() {
     use std::fs;
-    use std::io::prelude::*;
     use std::time::*;
 
-    let mut file = fs::File::options()
+    let file = fs::File::options()
         .write(true)
         .open("output.ppm")
         .unwrap_or_else(|_| fs::File::create("output.ppm").unwrap());
+    let mut file = std::io::BufWriter::new(file);
 
     //let (width, height) = (600, 338);
     //let (width, height) = (1920, 1080);
@@ -25,7 +25,7 @@ fn main() {
 
     ctl.add_object(object::Sphere::new((0.0, 0.0, -1.0).into(), 0.5));
     ctl.add_object(object::Sphere::new((0.0, 100.5, -1.0).into(), 100.0));
-    ctl.render();
+    ctl.render(&mut file).expect("rendering");
 
     let end = Instant::now();
     let dur = end.duration_since(start);
@@ -35,6 +35,4 @@ fn main() {
         width,
         height
     );
-
-    file.write(ctl.output()).expect("writing to file");
 }

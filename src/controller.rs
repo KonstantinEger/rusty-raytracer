@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use crate::camera::Camera;
 use crate::object::Hittable;
 use crate::ray::Ray;
@@ -5,19 +7,14 @@ use crate::vec3::Vec3;
 
 pub struct Controller {
     camera: Camera,
-    output: Vec<u8>,
     objects: Vec<Box<dyn Hittable>>,
 }
 impl Controller {
     pub fn new(width: usize, height: usize) -> Self {
-        let mut res = Self {
+        Self {
             camera: Camera::new(width, height),
-            output: Vec::with_capacity(width * height * 12 + 20),
             objects: vec![],
-        };
-        res.output
-            .extend_from_slice(&format!("P3\n{} {}\n255\n", width, height).as_bytes());
-        res
+        }
     }
 
     #[inline(always)]
@@ -38,25 +35,28 @@ impl Controller {
         self.objects.push(Box::new(obj));
     }
 
-    pub fn write_color(&mut self, color: &Vec3) {
+    pub fn write_color(&mut self, output: &mut dyn Write, color: &Vec3) -> std::io::Result<()> {
         let r = (color.x() * 255.0) as usize;
         let g = (color.y() * 255.0) as usize;
         let b = (color.z() * 255.0) as usize;
-        self.write_pixel(r, g, b);
+        self.write_pixel(output, r, g, b)?;
+        Ok(())
     }
 
-    pub fn write_pixel(&mut self, r: usize, g: usize, b: usize) {
-        self.output.extend_from_slice(r.to_string().as_bytes());
-        self.output.push(b' ');
-        self.output.extend_from_slice(g.to_string().as_bytes());
-        self.output.push(b' ');
-        self.output.extend_from_slice(b.to_string().as_bytes());
-        self.output.push(b'\n');
+    pub fn write_pixel(&mut self, output: &mut dyn Write, r: usize, g: usize, b: usize) -> std::io::Result<()> {
+        let _ = output.write(r.to_string().as_bytes())?;
+        let _ = output.write(b" ")?;
+        let _ = output.write(g.to_string().as_bytes())?;
+        let _ = output.write(b" ")?;
+        let _ = output.write(b.to_string().as_bytes())?;
+        let _ = output.write(b" \n")?;
+        Ok(())
     }
 
-    pub fn render(&mut self) {
+    pub fn render(&mut self, output: &mut dyn Write) -> std::io::Result<()> {
         let width = self.width() as f32;
         let height = self.height() as f32;
+        let _ = output.write(format!("P3\n{} {}\n255\n", width, height).as_bytes())?;
         for j in (0..self.height()).rev() {
             for i in 0..self.width() {
                 let u = (i as f32) / ((width - 1.0) as f32);
@@ -80,15 +80,12 @@ impl Controller {
                 if let Some(hit) = hit {
                     let unit_normal = hit.normal.unit();
                     let color = (unit_normal + Vec3::from((1.0, 1.0, 1.0))) * 0.5;
-                    self.write_color(&color);
+                    self.write_color(output, &color)?;
                 } else {
-                    self.write_color(&(0.2, 0.2, 0.2).into());
+                    self.write_color(output, &(0.2, 0.2, 0.2).into())?;
                 }
             }
         }
-    }
-
-    pub fn output(&self) -> &[u8] {
-        &self.output
+        Ok(())
     }
 }
